@@ -26,7 +26,7 @@ public class App {
 			}
 
 			// wait for listener to stop
-			l.join();
+			l.stop_join();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

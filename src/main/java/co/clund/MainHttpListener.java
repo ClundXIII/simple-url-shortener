@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.json.*;
 
 public class MainHttpListener {
@@ -13,29 +17,38 @@ public class MainHttpListener {
 		private final String ip;
 		private final int[] ports;
 
-		ListenInfo(String ip, int[] ports) {
+		public ListenInfo(String ip, int[] ports) {
 			this.ip = ip;
 			this.ports = ports;
 		}
 
-		public String getIp() {
-			return ip;
-		}
-
-		public int[] getPorts() {
-			return ports;
+		public void setupServer(Server server){
+			for (int port : ports){
+				ServerConnector connector = new ServerConnector(server, 1, 1);
+				connector.setHost(ip);
+				connector.setPort(port);
+				server.addConnector(connector);
+			}
 		}
 	}
 
 	private List<ListenInfo> lInfo = new ArrayList<>();
+	
+	private final AbstractHandler reqHandler;
+	
+	private final Server server;
 
 	public MainHttpListener(BufferedReader r) {
 
+		reqHandler = new RequestHandler();
+		
+		server = new Server(new QueuedThreadPool(512, 1));
+		
 		StringBuilder sb = new StringBuilder();
 
 		try {
 			while (r.ready()) {
-				sb.append(r.readLine());
+				sb.append(r.readLine() + "\n");
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -57,21 +70,37 @@ public class MainHttpListener {
 			for (int j = 0; j < jPorts.length(); j++) {
 				ports[j] = jPorts.getInt(j);
 				System.out.println("Initializing Listener at " + ip + ":" + ports[j]);
+				for (ListenInfo l : lInfo){
+					l.setupServer(server);
+				}
 			}
 
 			lInfo.add(new ListenInfo(ip, ports));
 
 		}
+		
+		server.setHandler(reqHandler);
 	}
 
 	public void run() {
-		// TODO Auto-generated method stub
-
+		try {
+			server.start();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
-	public void join() {
-		// TODO Auto-generated method stub
+	public void stop_join() {
 
+		try {
+			server.stop();
+			
+			server.join();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
 }
