@@ -13,6 +13,10 @@ import org.json.*;
 
 public class MainHttpListener {
 
+	private static final String JSON_VARNAME_IP = "ip";
+	private static final String JSON_VARNAME_PORTS = "ports";
+	private static final String JSON_VARNAME_LISTEN = "listen";
+
 	private class ListenInfo {
 		private final String ip;
 		private final int[] ports;
@@ -56,16 +60,16 @@ public class MainHttpListener {
 
 		JSONObject jO = new JSONObject(sb.toString());
 
-		JSONArray jsonListeners = jO.getJSONArray("listen");
+		JSONArray jsonListeners = jO.getJSONArray(JSON_VARNAME_LISTEN);
 
 		for (int i = 0; i < jsonListeners.length(); i++) {
 			JSONObject jListener = jsonListeners.getJSONObject(i);
-
-			String ip = jListener.getString("ip");
+			
+			String ip = jListener.getString(JSON_VARNAME_IP);
 
 			int ports[] = new int[128];
 
-			JSONArray jPorts = jListener.getJSONArray("ports");
+			JSONArray jPorts = jListener.getJSONArray(JSON_VARNAME_PORTS);
 
 			for (int j = 0; j < jPorts.length(); j++) {
 				ports[j] = jPorts.getInt(j);

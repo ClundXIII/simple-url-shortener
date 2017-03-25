@@ -11,20 +11,31 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 public class RequestHandler extends AbstractHandler {
 	
-	private final String ADMIN_PATH = "/admin/";
+	private static final String ADMIN_PATH = "/admin/";
 
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 		
 		System.out.println("target: " + target);
-		
-		if (target.startsWith(ADMIN_PATH)){
-			
-		}
-		
-        response.setContentType("text/html;charset=utf-8");
+
         response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("text/html;charset=utf-8");
+		
+        try {
+			if (target.startsWith(ADMIN_PATH)) {
+				
+			}
+			else {
+				
+			}
+        }
+        catch (Exception e){
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println(e.getMessage());
+            e.printStackTrace();
+        }
+		
         baseRequest.setHandled(true);
         response.getWriter().println("<h1>Hello World</h1>");
 	}
