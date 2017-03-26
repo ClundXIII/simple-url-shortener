@@ -1,4 +1,4 @@
-package redirect;
+package co.clund.redirect;
 
 public class RedirectHandler {
 

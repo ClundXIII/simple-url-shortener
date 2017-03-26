@@ -1,4 +1,4 @@
-package admin;
+package co.clund.admin;
 
 public class MainAdminHandler {
 
