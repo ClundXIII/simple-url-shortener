@@ -1,4 +1,4 @@
-package co.clund.db;
+package co.clund.model.db;
 
 import javax.persistence.Basic;
 import javax.persistence.Entity;
@@ -6,24 +6,27 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table( name = "EVENTS" )
-public class User {
+@Table( name = "user" )
+public class DBUser {
 
 	@Id
 	@Basic
-	private final Long id;
+	private Long id;
 	
 	@Basic
-	private final String username;
+	private String username;
 	
 	@Basic
-	private final String password;
+	private String password;
 
-	public User(Long id, String username, String password) {
+	DBUser(){
+	}
+	
+	/*public User(Long id, String username, String password) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
-	}
+	}*/
 
 	public Long getId() {
 		return this.id;

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 
+import co.clund.model.db.DatabaseConnector;
 import junit.framework.TestCase;
 
 /**
@@ -13,11 +14,15 @@ import junit.framework.TestCase;
  */
 public class AppTest extends TestCase {
 	
+	private final String tName;
+	
 	public AppTest(String testName) {
 		super(testName);
+		this.tName = testName;
 	}
 
-	public void testApp() {
+	public void testHttpServer() {
+		System.out.println("starting test " + tName + " #1"); 
 		try {
 			InputStream res = getClass().getResourceAsStream("/apptest.json");
 			InputStreamReader is = new InputStreamReader(res);
@@ -44,6 +49,21 @@ public class AppTest extends TestCase {
 			mhl.stop_join();
 			
 			assertTrue(true);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
+	}
+	
+
+	public void testDbCon() {
+		System.out.println("starting test " + tName + " #2");
+		try {
+			
+			DatabaseConnector dbCon = new DatabaseConnector("co.clund.test", null, null, null, null); //$NON-NLS-1$
+			
+			System.out.println(dbCon.toString());
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
