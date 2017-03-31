@@ -13,7 +13,7 @@ import co.clund.model.Redirect;
 
 public class DatabaseConnector {
 
-	private final EntityManagerFactory entityManagerFactory;
+	private EntityManagerFactory entityManagerFactory;
 
 	private final Map<Integer, DBUser> userMap = new HashMap<>();
 	private final Map<String, DBRedirect> redirectLinkMap = new HashMap<>();
@@ -29,11 +29,11 @@ public class DatabaseConnector {
 		configuration.configure("/META-INF/hibernate.cfg.xml");
 		entityManagerFactory = configuration.buildSessionFactory();*/
 		
-		entityManagerFactory = Persistence.createEntityManagerFactory("co.clund.test");
+		entityManagerFactory = Persistence.createEntityManagerFactory("co.clund.model.db");
 
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		entityManager.getTransaction().begin();
-        List<DBUser> result = entityManager.createQuery( "from user", DBUser.class ).getResultList();
+		//entityManager.getTransaction().begin();
+        //List<DBUser> result = entityManager.createQuery( "from user", DBUser.class ).getResultList();
 	
 	}
 

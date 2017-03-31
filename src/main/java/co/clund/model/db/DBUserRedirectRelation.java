@@ -19,4 +19,8 @@ public class DBUserRedirectRelation {
 	@Basic
 	private Long redirect_id;
 	
+	public DBUserRedirectRelation(){
+		
+	}
+	
 }

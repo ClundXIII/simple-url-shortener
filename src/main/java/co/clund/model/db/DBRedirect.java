@@ -18,5 +18,9 @@ public class DBRedirect {
 	
 	@Basic
 	private String url;
+	
+	public DBRedirect(){
+		
+	}
 
 }
