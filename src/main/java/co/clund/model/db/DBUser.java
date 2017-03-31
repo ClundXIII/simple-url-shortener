@@ -21,12 +21,16 @@ public class DBUser {
 
 	DBUser(){
 	}
-	
-	/*public User(Long id, String username, String password) {
+
+	public DBUser(int id, String username, String password) {
+		this(new Long(id), username, password);
+	}
+
+	public DBUser(Long id, String username, String password) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
-	}*/
+	}
 
 	public Long getId() {
 		return this.id;

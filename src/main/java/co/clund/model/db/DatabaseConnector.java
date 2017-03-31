@@ -15,11 +15,21 @@ public class DatabaseConnector {
 
 	private EntityManagerFactory entityManagerFactory;
 
+	public EntityManagerFactory getEntityManagerFactory() {
+		return entityManagerFactory;
+	}
+
 	private final Map<Integer, DBUser> userMap = new HashMap<>();
 	private final Map<String, DBRedirect> redirectLinkMap = new HashMap<>();
 
 	public DatabaseConnector(String persistentUnitName, String host, String username, String password,
-			String database) {
+			String database){
+		this(persistentUnitName, host, username, password,
+				database, true);
+	}
+	
+	public DatabaseConnector(String persistentUnitName, String host, String username, String password,
+			String database, boolean loadInitialData) {
 
 		/*Configuration configuration = new Configuration();
 		configuration.addPackage("models").addAnnotatedClass(DBUser.class);
@@ -32,9 +42,12 @@ public class DatabaseConnector {
 		entityManagerFactory = Persistence.createEntityManagerFactory("co.clund.model.db");
 
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		//entityManager.getTransaction().begin();
-        //List<DBUser> result = entityManager.createQuery( "from user", DBUser.class ).getResultList();
-	
+		
+		if (loadInitialData){
+			//entityManager.getTransaction().begin();
+	        //List<DBUser> result = entityManager.createQuery( "from user", DBUser.class ).getResultList();
+			///TODO: add a loader for initial data
+		}
 	}
 
 	public User getUserById(Integer id){
