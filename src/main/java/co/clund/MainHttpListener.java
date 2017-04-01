@@ -28,6 +28,7 @@ public class MainHttpListener {
 
 		public void setupServer(Server server){
 			for (int port : ports){
+				@SuppressWarnings("resource")
 				ServerConnector connector = new ServerConnector(server, 1, 1);
 				connector.setHost(ip);
 				connector.setPort(port);

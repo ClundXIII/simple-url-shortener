@@ -19,11 +19,7 @@ public class App {
 			MainHttpListener l = new MainHttpListener(r);
 			l.run();
 
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			System.in.read();
 
 			// wait for listener to stop
 			l.stop_join();

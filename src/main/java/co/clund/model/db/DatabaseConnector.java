@@ -39,7 +39,7 @@ public class DatabaseConnector {
 		configuration.configure("/META-INF/hibernate.cfg.xml");
 		entityManagerFactory = configuration.buildSessionFactory();*/
 		
-		entityManagerFactory = Persistence.createEntityManagerFactory("co.clund.model.db");
+		entityManagerFactory = Persistence.createEntityManagerFactory(persistentUnitName);
 
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		
