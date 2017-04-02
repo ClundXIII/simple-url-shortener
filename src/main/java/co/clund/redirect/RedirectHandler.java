@@ -17,13 +17,12 @@ public class RedirectHandler {
 
 	public void handle(String target, HttpServletResponse response) throws IOException {
 		
-		response.getWriter().println("searching for " + target.substring(1));
-		
 		Redirect redirect = dbCon.getRedirectByLink(target.substring(1));
 		if (redirect != null){
-			response.getWriter().println("redir: " + redirect.getUrl());
+			response.sendRedirect(redirect.getUrl());
 		}
 		else {
+			response.getWriter().println("searching for " + target.substring(1));
 			response.getWriter().println("redir: redirect not found");
 		}
 	}
