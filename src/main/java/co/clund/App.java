@@ -22,11 +22,27 @@ public class App {
 			System.in.read();
 
 			// wait for listener to stop
+			
+			(new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						System.out.println("interrupted: " + e.getLocalizedMessage());
+					}
+					System.out.println("failed to wait for Listener to stop. Forcing shutdown");
+					System.exit(1);
+				}
+			})).start();
+			
 			l.stop_join();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
 		System.out.println("stopped!");
+		
+		System.exit(0);
 	}
 }
