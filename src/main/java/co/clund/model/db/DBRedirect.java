@@ -18,9 +18,15 @@ public class DBRedirect {
 	
 	@Basic
 	private String url;
-	
+
 	public DBRedirect(){
 		
+	}
+
+	public DBRedirect(Long id, String link, String url){
+		this.id = id;
+		this.link = link;
+		this.url = url;
 	}
 
 	public Long getId() {

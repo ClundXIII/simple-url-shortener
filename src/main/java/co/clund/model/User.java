@@ -1,34 +1,76 @@
 package co.clund.model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 import co.clund.model.db.DBUser;
 import co.clund.model.db.DatabaseConnector;
 
 public class User {
-
-	/**
-	 * true = owner
-	 * false = user
-	 */
-	private final Map<String, Boolean> redirects = new HashMap<>();
 	
-	public User(DBUser dbUser, DatabaseConnector dbCon) {
-		this(dbUser.getUsername(), dbUser.getPassword(), dbCon);
+	private DatabaseConnector dbCon;
+
+	private Long id;
+	
+	private String username;
+	private String password;
+	
+	
+	public Long getId() {
+		return id;
 	}
 
-	public User(String username, String password, DatabaseConnector dbCon) {
+	public void setId(Long id) {
+		this.id = id;
+		persist();
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+		persist();
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+		persist();
+	}
+
+	private final Set<Redirect> redirects = new HashSet<>();
+	
+	public User(DBUser dbUser, DatabaseConnector dbCon) {
+		this(dbUser.getId(), dbUser.getUsername(), dbUser.getPassword(), dbCon);
+	}
+
+	public User(Long id, String username, String password, DatabaseConnector dbCon) {
 		
+		this.id = id;
+		
+		this.username = username;
+		this.password = password;
+		
+		this.dbCon = dbCon;
 	}
 
 	public static User login(String username, String password, DatabaseConnector dbCon){
 		return null;
-
-		//db.User = 
 		
-		
+		///TODO
 	}
-	
+
+	public Set<Redirect> getRedirects() {
+		return redirects;
+	}
+
+	public void persist() {
+		dbCon.persist(new DBUser(id, username, password));
+	}
 	
 }
