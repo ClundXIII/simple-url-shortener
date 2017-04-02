@@ -22,44 +22,59 @@ public class DatabaseConnector {
 	private final Map<Integer, DBUser> userMap = new HashMap<>();
 	private final Map<String, DBRedirect> redirectLinkMap = new HashMap<>();
 
-	public DatabaseConnector(String persistentUnitName, String host, String username, String password,
-			String database){
-		this(persistentUnitName, host, username, password,
-				database, true);
+	public DatabaseConnector(String persistentUnitName, String host, String username, String password) {
+		this(persistentUnitName, host, username, password, true);
 	}
-	
-	public DatabaseConnector(String persistentUnitName, String host, String username, String password,
-			String database, boolean loadInitialData) {
 
-		/*Configuration configuration = new Configuration();
-		configuration.addPackage("models").addAnnotatedClass(DBUser.class);
-		configuration.addPackage("models").addAnnotatedClass(DBRedirect.class);
-		configuration.addPackage("models").addAnnotatedClass(DBUserRedirectRelation.class);
-		//configuration.configure("/META-INF/persistence.xml");
-		configuration.configure("/META-INF/hibernate.cfg.xml");
-		entityManagerFactory = configuration.buildSessionFactory();*/
+	public DatabaseConnector(String persistentUnitName, String url, String username, String password,
+			boolean loadInitialData) {
+
+		/*
+		 * Configuration configuration = new Configuration();
+		 * configuration.addPackage("models").addAnnotatedClass(DBUser.class);
+		 * configuration.addPackage("models").addAnnotatedClass(DBRedirect.class
+		 * ); configuration.addPackage("models").addAnnotatedClass(
+		 * DBUserRedirectRelation.class);
+		 * //configuration.configure("/META-INF/persistence.xml");
+		 * configuration.configure("/META-INF/hibernate.cfg.xml");
+		 * entityManagerFactory = configuration.buildSessionFactory();
+		 */
+
+		Map<String, String> configMap = new HashMap<>();
 		
-		entityManagerFactory = Persistence.createEntityManagerFactory(persistentUnitName);
+		if (url != null){
+			configMap.put("hibernate.connection.url", url);
+		}
+		if (username != null){
+			configMap.put("hibernate.connection.username", username);
+		}
+		if (password != null){
+			configMap.put("hibernate.connection.password", password);
+		}
+
+		entityManagerFactory = Persistence.createEntityManagerFactory(persistentUnitName, configMap);
+		
 
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		
-		if (loadInitialData){
-			//entityManager.getTransaction().begin();
-	        //List<DBUser> result = entityManager.createQuery( "from user", DBUser.class ).getResultList();
-			///TODO: add a loader for initial data
+
+		if (loadInitialData) {
+			// entityManager.getTransaction().begin();
+			// List<DBUser> result = entityManager.createQuery( "from user",
+			// DBUser.class ).getResultList();
+			/// TODO: add a loader for initial data
 		}
 	}
 
-	public User getUserById(Integer id){
-		
+	public User getUserById(Integer id) {
+
 		return new User(userMap.get(id), this);
 	}
-	
-	public Redirect getRedirectByLink(String link){
-		
+
+	public Redirect getRedirectByLink(String link) {
+
 		DBRedirect dbRed = redirectLinkMap.get(link);
-		
-		if (dbRed == null){
+
+		if (dbRed == null) {
 			return null;
 		}
 		return new Redirect(dbRed, this);

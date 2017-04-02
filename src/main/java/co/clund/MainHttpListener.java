@@ -28,8 +28,8 @@ public class MainHttpListener {
 			this.ports = ports;
 		}
 
-		public void setupServer(Server server){
-			for (int port : ports){
+		public void setupServer(Server server) {
+			for (int port : ports) {
 				@SuppressWarnings("resource")
 				ServerConnector connector = new ServerConnector(server, 1, 1);
 				connector.setHost(ip);
@@ -40,21 +40,14 @@ public class MainHttpListener {
 	}
 
 	private List<ListenInfo> lInfo = new ArrayList<>();
-	
+
 	private final AbstractHandler reqHandler;
-	
+
 	private final Server server;
 	private final DatabaseConnector dbCon;
 
 	public MainHttpListener(BufferedReader r) {
-		
-		///TODO: finish parsing of database settings
-		this.dbCon = new DatabaseConnector("co.clund.db.mysql", null, null, null, null);
 
-		reqHandler = new RequestHandler(this.dbCon);
-		
-		server = new Server(new QueuedThreadPool(512, 1));
-		
 		StringBuilder sb = new StringBuilder();
 
 		try {
@@ -67,11 +60,25 @@ public class MainHttpListener {
 
 		JSONObject jO = new JSONObject(sb.toString());
 
+		try {
+
+			JSONObject dbConfig = jO.getJSONObject("persistence-db-config");
+
+			this.dbCon = new DatabaseConnector(dbConfig.getString("persistence-unit-name"), dbConfig.getString("url"),
+					dbConfig.getString("username"), dbConfig.getString("password"));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		reqHandler = new RequestHandler(this.dbCon);
+
+		server = new Server(new QueuedThreadPool(512, 1));
+
 		JSONArray jsonListeners = jO.getJSONArray(JSON_VARNAME_LISTEN);
 
 		for (int i = 0; i < jsonListeners.length(); i++) {
 			JSONObject jListener = jsonListeners.getJSONObject(i);
-			
+
 			String ip = jListener.getString(JSON_VARNAME_IP);
 
 			int ports[] = new int[128];
@@ -81,7 +88,7 @@ public class MainHttpListener {
 			for (int j = 0; j < jPorts.length(); j++) {
 				ports[j] = jPorts.getInt(j);
 				System.out.println("Initializing Listener at " + ip + ":" + ports[j]);
-				for (ListenInfo l : lInfo){
+				for (ListenInfo l : lInfo) {
 					l.setupServer(server);
 				}
 			}
@@ -89,7 +96,7 @@ public class MainHttpListener {
 			lInfo.add(new ListenInfo(ip, ports));
 
 		}
-		
+
 		server.setHandler(reqHandler);
 	}
 
@@ -106,7 +113,7 @@ public class MainHttpListener {
 
 		try {
 			server.stop();
-			
+
 			server.join();
 		} catch (Exception e) {
 			e.printStackTrace();

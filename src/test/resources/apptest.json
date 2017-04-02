@@ -8,5 +8,11 @@
    "ip"    : "192.168.0.1",
    "ports" : ["8083"]
   },
- ]
+ ], 
+ "persistence-db-config" : {
+  "persistence-unit-name" : "co.clund.test",
+  "url"          : "jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE",
+  "username"     : "sa",
+  "password"     : ""
+  }
 }

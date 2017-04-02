@@ -1,56 +1,54 @@
-<!--
-  ~ Hibernate, Relational Persistence for Idiomatic Java
-  ~
-  ~ License: GNU Lesser General Public License (LGPL), version 2.1 or later.
-  ~ See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
-  ~
-  ~ Adjusted for simple-url-shortener
-  -->
+<!-- ~ Hibernate, Relational Persistence for Idiomatic Java ~ ~ License: 
+	GNU Lesser General Public License (LGPL), version 2.1 or later. ~ See the 
+	lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>. 
+	~ ~ Adjusted for simple-url-shortener -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
-             version="2.0">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+	version="2.0">
 
-    <persistence-unit name="co.clund.test">
-        <description>
+	<persistence-unit name="co.clund.test">
+		<description>
             Persistence unit for testing
         </description>
 
-        <class>co.clund.model.db.DBUser</class>
-        <class>co.clund.model.db.DBUserRedirectRelation</class>
-        <class>co.clund.model.db.DBRedirect</class>
+		<class>co.clund.model.db.DBUser</class>
+		<class>co.clund.model.db.DBUserRedirectRelation</class>
+		<class>co.clund.model.db.DBRedirect</class>
 
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE" />
-            <property name="javax.persistence.jdbc.user" value="sa" />
-            <property name="javax.persistence.jdbc.password" value="" />
+		<properties>
+			<property name="hibernate.connection.driver_class" value="org.h2.Driver" />
+			<property name="hibernate.connection.url" value="jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE" />
+			<property name="hibernate.connection.username" value="sa" />
+			<property name="hibernate.connection.password" value="" />
 
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="create" />
-        </properties>
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.hbm2ddl.auto" value="create" />
+		</properties>
 
-    </persistence-unit>
+	</persistence-unit>
 
-    <persistence-unit name="co.clund.db.mysql">
-        <description>
+	<persistence-unit name="co.clund.db.mysql">
+		<description>
             Persistence unit for mysql connection
         </description>
 
-        <class>co.clund.model.db.DBUser</class>
-        <class>co.clund.model.db.DBUserRedirectRelation</class>
-        <class>co.clund.model.db.DBRedirect</class>
+		<class>co.clund.model.db.DBUser</class>
+		<class>co.clund.model.db.DBUserRedirectRelation</class>
+		<class>co.clund.model.db.DBRedirect</class>
 
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
-            <property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1;MVCC=TRUE" />
-            <property name="javax.persistence.jdbc.user" value="sa" />
-            <property name="javax.persistence.jdbc.password" value="" />
+		<properties>
+			<property name="hibernate.archive.autodetection" value="class" />
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect" /> -->
+			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
+			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/simple-url-short?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC" />
+			<property name="hibernate.connection.username" value="root" />
+			<property name="hibernate.connection.password" value="" />
+			<property name="hibernate.show_sql" value="true"/>
+			<property name="hibernate.flushMode" value="FLUSH_AUTO" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+		</properties>
 
-            <property name="hibernate.show_sql" value="true" />
-            <property name="hibernate.hbm2ddl.auto" value="create" />
-        </properties>
-
-    </persistence-unit>
+	</persistence-unit>
 
 </persistence>

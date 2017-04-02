@@ -76,7 +76,7 @@ public class AppTest extends TestCase {
 		System.out.println("starting test " + tName + " #2");
 		try {
 
-			DatabaseConnector dbCon = new DatabaseConnector("co.clund.test", null, null, null, null, false);
+			DatabaseConnector dbCon = new DatabaseConnector("co.clund.test", null, null, null, false);
 
 			System.out.println(dbCon.toString());
 
