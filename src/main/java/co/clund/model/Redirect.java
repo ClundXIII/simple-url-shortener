@@ -5,11 +5,16 @@ import co.clund.model.db.DBRedirect;
 import co.clund.model.db.DatabaseConnector;
 
 public class Redirect {
-	public Redirect(){
-		
+
+	private String link;
+	private String url;
+	
+	public Redirect(DBRedirect dbRedirect, DatabaseConnector dbCon){
+		link = dbRedirect.getLink();
+		url = dbRedirect.getUrl();
 	}
 
-	public Redirect(DBRedirect dbRedirect, DatabaseConnector dbCon){
-		
+	public String getUrl() {
+		return url;
 	}
 }

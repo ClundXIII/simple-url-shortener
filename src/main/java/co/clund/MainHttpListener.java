@@ -11,6 +11,8 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.json.*;
 
+import co.clund.model.db.DatabaseConnector;
+
 public class MainHttpListener {
 
 	private static final String JSON_VARNAME_IP = "ip";
@@ -42,10 +44,14 @@ public class MainHttpListener {
 	private final AbstractHandler reqHandler;
 	
 	private final Server server;
+	private final DatabaseConnector dbCon;
 
 	public MainHttpListener(BufferedReader r) {
+		
+		///TODO: finish parsing of database settings
+		this.dbCon = new DatabaseConnector("co.clund.db.mysql", null, null, null, null);
 
-		reqHandler = new RequestHandler();
+		reqHandler = new RequestHandler(this.dbCon);
 		
 		server = new Server(new QueuedThreadPool(512, 1));
 		

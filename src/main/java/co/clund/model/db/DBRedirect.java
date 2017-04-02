@@ -23,4 +23,16 @@ public class DBRedirect {
 		
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public String getLink() {
+		return link;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
 }

@@ -57,7 +57,12 @@ public class DatabaseConnector {
 	
 	public Redirect getRedirectByLink(String link){
 		
-		return new Redirect(redirectLinkMap.get(link), this);
+		DBRedirect dbRed = redirectLinkMap.get(link);
+		
+		if (dbRed == null){
+			return null;
+		}
+		return new Redirect(dbRed, this);
 	}
 
 }
