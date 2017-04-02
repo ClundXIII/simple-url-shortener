@@ -19,7 +19,7 @@ public class DatabaseConnector {
 		return entityManagerFactory;
 	}
 
-	private final Map<Integer, DBUser> userMap = new HashMap<>();
+	private final Map<Long, DBUser> userMap = new HashMap<>();
 	private final Map<String, DBRedirect> redirectLinkMap = new HashMap<>();
 
 	public DatabaseConnector(String persistentUnitName, String host, String username, String password) {
@@ -28,17 +28,6 @@ public class DatabaseConnector {
 
 	public DatabaseConnector(String persistentUnitName, String url, String username, String password,
 			boolean loadInitialData) {
-
-		/*
-		 * Configuration configuration = new Configuration();
-		 * configuration.addPackage("models").addAnnotatedClass(DBUser.class);
-		 * configuration.addPackage("models").addAnnotatedClass(DBRedirect.class
-		 * ); configuration.addPackage("models").addAnnotatedClass(
-		 * DBUserRedirectRelation.class);
-		 * //configuration.configure("/META-INF/persistence.xml");
-		 * configuration.configure("/META-INF/hibernate.cfg.xml");
-		 * entityManagerFactory = configuration.buildSessionFactory();
-		 */
 
 		Map<String, String> configMap = new HashMap<>();
 		
@@ -58,10 +47,25 @@ public class DatabaseConnector {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 
 		if (loadInitialData) {
-			// entityManager.getTransaction().begin();
-			// List<DBUser> result = entityManager.createQuery( "from user",
-			// DBUser.class ).getResultList();
-			/// TODO: add a loader for initial data
+			entityManager.getTransaction().begin();
+			List<DBUser> result = entityManager.createQuery( "from DBUser", DBUser.class ).getResultList();
+		
+			System.out.println("adding users:");
+			for (DBUser u : result){
+				System.out.println("added user " + u.getUsername());
+				userMap.put(u.getId(), u);
+			}
+			
+			List<DBRedirect> result2 = entityManager.createQuery( "from DBRedirect", DBRedirect.class ).getResultList();
+
+			System.out.println("adding redirs:");
+			for (DBRedirect r : result2){
+				System.out.println("adding redir " + r.getLink() + " " + r.getUrl());
+				redirectLinkMap.put(r.getLink(), r);
+			}
+			
+	        entityManager.getTransaction().commit();
+	        entityManager.close();
 		}
 	}
 

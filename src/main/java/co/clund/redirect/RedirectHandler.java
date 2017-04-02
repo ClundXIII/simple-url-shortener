@@ -17,7 +17,9 @@ public class RedirectHandler {
 
 	public void handle(String target, HttpServletResponse response) throws IOException {
 		
-		Redirect redirect = dbCon.getRedirectByLink(target);
+		response.getWriter().println("searching for " + target.substring(1));
+		
+		Redirect redirect = dbCon.getRedirectByLink(target.substring(1));
 		if (redirect != null){
 			response.getWriter().println("redir: " + redirect.getUrl());
 		}

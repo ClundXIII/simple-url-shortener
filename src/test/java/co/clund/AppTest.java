@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -87,6 +88,17 @@ public class AppTest extends TestCase {
 			entityManager.persist(new DBUser(2, "user2", "nchtasdf"));
 			entityManager.getTransaction().commit();
 			entityManager.close();
+			
+
+			// now lets pull events from the database and list them
+			entityManager = emf.createEntityManager();
+			entityManager.getTransaction().begin();
+	        List<DBUser> result = entityManager.createQuery( "from DBUser", DBUser.class ).getResultList();
+			for ( DBUser user : result ) {
+				System.out.println( "User (" + user.getUsername() + ") : " + user.getPassword() );
+			}
+	        entityManager.getTransaction().commit();
+	        entityManager.close();
 
 		} catch (Exception e) {
 			e.printStackTrace();
