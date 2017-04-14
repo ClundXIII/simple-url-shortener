@@ -53,6 +53,7 @@ public class MainAdminHandler {
 			
 		case "login":
 			body = ResourceUtil.getResourceAsString("/html/login.html");
+			break;
 
 		default:
 			body = "not found";
