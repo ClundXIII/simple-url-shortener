@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.eclipse.jetty.server.Request;
 
@@ -23,40 +24,49 @@ public class MainAdminHandler {
 			throws IOException {
 		System.out.println("admin: " + target.replace("/admin/", ""));
 		
+		HttpSession session = request.getSession();
+
 		String location = target.replace("/admin/", "").replace("/admin", "");
-		
-		String body = "";
+
 		boolean do_nav = true;
 		
-		switch (location){
-			case "":
-			case "redirects":
-				body = "<h1>redirect management</h1>";
-				break;
+		/*if (session.getAttribute("userid") == null) {
+			location = "login";
+			do_nav = false;
+		}*/
+
+		String body = "";
+
+		switch (location) {
+		case "":
+		case "redirects":
+			body = "<h1>redirect management</h1>";
+			break;
+
+		case "user":
+			body = "<h1>user management</h1>";
+			break;
+
+		case "logout":
+			body = "logging out ...";
+			break;
 			
-			case "user":
-				body = "<h1>user management</h1>";
-				break;
-				
-			case "logout":
-				body = "logging out ...";
-				break;
-				
-			default:
-				body = "not found";
+		case "login":
+			body = ResourceUtil.getResourceAsString("/html/login.html");
+
+		default:
+			body = "not found";
 		}
-		
-		
+
 		try (PrintWriter w = response.getWriter()) {
 
 			String index = ResourceUtil.getResourceAsString("/html/index.html");
 
 			index = index.replace("$$LOGIN$$", "login here<br>");
 			index = index.replace("$$BODY$$", body);
-			if (do_nav){
+			if (do_nav) {
 				index = index.replace("$$NAVIGATION$$", ResourceUtil.getResourceAsString("/html/navigation.html"));
-			}
-			else{
+			} else {
 				index = index.replace("$$NAVIGATION$$", "");
 			}
 

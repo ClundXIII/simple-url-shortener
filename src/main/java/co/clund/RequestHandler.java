@@ -17,6 +17,10 @@ public class RequestHandler extends AbstractHandler {
 	
 	private static final String ADMIN_PATH = "/admin/";
 	
+	public static String getAdminPath() {
+		return ADMIN_PATH;
+	}
+
 	private final DatabaseConnector dbCon;
 
 	private final MainAdminHandler maHandler;
@@ -50,6 +54,7 @@ public class RequestHandler extends AbstractHandler {
         }
         catch (Exception e){
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().println("Error:<br>");
             response.getWriter().println(e.getMessage());
             e.printStackTrace();
         }
