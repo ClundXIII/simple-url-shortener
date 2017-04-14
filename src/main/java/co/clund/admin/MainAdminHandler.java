@@ -30,10 +30,10 @@ public class MainAdminHandler {
 
 		boolean do_nav = true;
 		
-		/*if (session.getAttribute("userid") == null) {
+		if (session.getAttribute("userid") == null) {
 			location = "login";
 			do_nav = false;
-		}*/
+		}
 
 		String body = "";
 

@@ -5,14 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.session.DefaultSessionCache;
-import org.eclipse.jetty.server.session.NullSessionDataStore;
-import org.eclipse.jetty.server.session.SessionCache;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
 import org.json.*;
@@ -102,36 +101,16 @@ public class MainHttpListener {
 			lInfo.add(new ListenInfo(ip, ports));
 
 		}
+		
+		ContextHandler c = new ContextHandler("/");
+		c.setContextPath("/");
+		SessionHandler s = new SessionHandler();
+		s.setHandler(reqHandler);
+		c.setHandler(s);
 
-		//server.setHandler(reqHandler);
-
-
-        // Create a ServletContext, with a session handler enabled.
-        ServletContextHandler context = new ServletContextHandler(
-                ServletContextHandler.SESSIONS);
-        //context.setContextPath("*");
-        context.setResourceBase(".");
-        context.setHandler(reqHandler);
-
-        // Access the SessionHandler from the context.
-        SessionHandler sessions = context.getSessionHandler();
-        
-        // Explicitly set Session Cache and null Datastore.
-        // This is normally done by default,
-        // but is done explicitly here for demonstration.
-        // If more than one context is to be deployed, it is
-        // simpler to use SessionCacheFactory and/or
-        // SessionDataStoreFactory instances set as beans on 
-        // the server.
-        SessionCache cache = new DefaultSessionCache(sessions);
-        cache.setSessionDataStore(new NullSessionDataStore());
-        sessions.setSessionCache(cache);
-
-        // Servlet to read/set the greeting stored in the session.
-        // Can be accessed using http://localhost:8080/hello
-        //context.addServlet(BasicSessionServlet.class, "/");
-
-        server.setHandler(context);
+		ContextHandlerCollection contexts = new ContextHandlerCollection();
+		contexts.setHandlers(new Handler[]{c});
+		server.setHandler(contexts);
         
 	}
 
