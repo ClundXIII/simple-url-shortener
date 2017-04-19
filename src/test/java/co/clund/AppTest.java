@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import co.clund.admin.MainAdminHandler;
 import co.clund.model.db.DBUser;
 import co.clund.model.db.DatabaseConnector;
 import junit.framework.TestCase;
@@ -104,5 +105,12 @@ public class AppTest extends TestCase {
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public static void testMainAdminHandler(){
+		
+		MainAdminHandler a = new MainAdminHandler(null);
+		a.toString();
+		
 	}
 }
