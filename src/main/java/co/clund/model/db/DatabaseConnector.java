@@ -87,12 +87,24 @@ public class DatabaseConnector {
 
 	public User getUserById(Integer id) {
 
-		return new User(userIdMap.get(id), this);
+		DBUser dbUser = userIdMap.get(id);
+		
+		if (dbUser == null){
+			return null;
+		}
+		
+		return new User(dbUser, this);
 	}
 
 	public User getUserByName(String username) {
 		
-		return new User(userNameMap.get(username), this);
+		DBUser dbUser = userNameMap.get(username);
+		
+		if (dbUser == null){
+			return null;
+		}
+		
+		return new User(dbUser, this);
 	}
 
 	public Redirect getRedirectByLink(String link) {

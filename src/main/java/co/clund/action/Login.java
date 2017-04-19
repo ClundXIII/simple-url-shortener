@@ -15,6 +15,8 @@ import co.clund.model.db.DatabaseConnector;
 
 public class Login extends AbstractAction {
 
+	private static final String WRONG_PASSWORD_MESSAGE = "wrong password!<br><a href=\"login\">try again</a>";
+
 	public Login(DatabaseConnector dbCon) {
 		super("login", dbCon);
 	}
@@ -39,13 +41,16 @@ public class Login extends AbstractAction {
 		String password = passwords[0];
 		
 		User userByName = dbCon.getUserByName(username);
+		if (userByName == null){
+			return WRONG_PASSWORD_MESSAGE;
+		}
 		String passwordToTest = userByName.getPassword();
 		
 		if (BCrypt.checkpw(password, passwordToTest)){
 			request.getSession().setAttribute("userid", userByName.getId());
 		}
 		else {
-			return "wrong password!<br><a href=\"login\">try again</a>";
+			return WRONG_PASSWORD_MESSAGE;
 		}
 		
 		try {
