@@ -57,7 +57,7 @@ public class MainAdminHandler {
 
 		String location = target.replace("/admin/", "").replace("/admin", "");
 
-		boolean do_nav = true;
+		boolean doNav = true;
 
 		if ((session.getAttribute("userid") == null) && (!location.equals("action"))) {
 			location = "login";
@@ -76,17 +76,36 @@ public class MainAdminHandler {
 			break;
 
 		case "logout":
-			body = "logging out ...";
+			body = "logging out ...<br><a href=\"login\">back to login</a>";
 			session.invalidate();
+			doNav = false;
 			break;
 
 		case "action":
-			//actions.get(request.)
+			doNav = false;
+			String actionStrings[] = request.getParameterMap().get("f");
+			
+			if (actionStrings.length != 0){
+				String actionString = actionStrings[0];
+				
+				AbstractAction thisA = actions.get(actionString);
+
+				if (thisA != null){
+					body = thisA.processAction(target, baseRequest, request, response);
+				}
+				else {
+					body = "action \"" + request.getParameterMap().get("f") + "\" not found";
+				}
+				
+			}
+			else {
+				body = "post parameter f not set";
+			}
 			break;
 
 		case "login":
 			body = ResourceUtil.getResourceAsString("/html/login.html");
-			do_nav = false;
+			doNav = false;
 			break;
 
 		default:
@@ -98,7 +117,7 @@ public class MainAdminHandler {
 			String index = ResourceUtil.getResourceAsString("/html/index.html");
 
 			index = index.replace("$$BODY$$", body);
-			if (do_nav) {
+			if (doNav) {
 				index = index.replace("$$NAVIGATION$$", ResourceUtil.getResourceAsString("/html/navigation.html"));
 			} else {
 				index = index.replace("$$NAVIGATION$$", "");

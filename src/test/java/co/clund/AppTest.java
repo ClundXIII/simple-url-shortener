@@ -10,6 +10,8 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import co.clund.admin.MainAdminHandler;
 import co.clund.model.db.DBUser;
 import co.clund.model.db.DatabaseConnector;
@@ -112,5 +114,10 @@ public class AppTest extends TestCase {
 		MainAdminHandler a = new MainAdminHandler(null);
 		a.toString();
 		
+	}
+	
+	public static void testBcrypt(){
+		System.out.println("generating Test Password:");
+		System.out.println(BCrypt.hashpw("testLogin", BCrypt.gensalt()));
 	}
 }

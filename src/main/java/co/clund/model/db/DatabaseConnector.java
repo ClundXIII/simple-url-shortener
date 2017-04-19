@@ -19,7 +19,8 @@ public class DatabaseConnector {
 		return entityManagerFactory;
 	}
 
-	private final Map<Long, DBUser> userMap = new HashMap<>();
+	private final Map<Long, DBUser> userIdMap = new HashMap<>();
+	private final Map<String, DBUser> userNameMap = new HashMap<>();
 	
 	private final Map<String, DBRedirect> redirectLinkMap = new HashMap<>();
 	private final Map<Long, DBRedirect> redirectIdMap = new HashMap<>();
@@ -66,7 +67,8 @@ public class DatabaseConnector {
 			System.out.println("adding users:");
 			for (DBUser u : result) {
 				System.out.println("added user " + u.getUsername());
-				userMap.put(u.getId(), u);
+				userIdMap.put(u.getId(), u);
+				userNameMap.put(u.getUsername(), u);
 			}
 
 			List<DBUserRedirectRelation> resultRel = entityManager
@@ -85,7 +87,12 @@ public class DatabaseConnector {
 
 	public User getUserById(Integer id) {
 
-		return new User(userMap.get(id), this);
+		return new User(userIdMap.get(id), this);
+	}
+
+	public User getUserByName(String username) {
+		
+		return new User(userNameMap.get(username), this);
 	}
 
 	public Redirect getRedirectByLink(String link) {
