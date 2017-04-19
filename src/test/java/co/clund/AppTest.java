@@ -87,8 +87,8 @@ public class AppTest extends TestCase {
 			EntityManagerFactory emf = dbCon.getEntityManagerFactory();
 			EntityManager entityManager = emf.createEntityManager();
 			entityManager.getTransaction().begin();
-			entityManager.persist(new DBUser(1, "user1", "asdf"));
-			entityManager.persist(new DBUser(2, "user2", "nchtasdf"));
+			entityManager.persist(new DBUser(1, "user1", "asdf", true));
+			entityManager.persist(new DBUser(2, "user2", "nchtasdf", false));
 			entityManager.getTransaction().commit();
 			entityManager.close();
 			

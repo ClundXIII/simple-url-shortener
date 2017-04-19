@@ -14,6 +14,7 @@ public class User {
 	
 	private String username;
 	private String password;
+	private Boolean is_admin;
 	
 	
 	public Long getId() {
@@ -59,18 +60,21 @@ public class User {
 		this.dbCon = dbCon;
 	}
 
-	public static User login(String username, String password, DatabaseConnector dbCon){
-		return null;
-		
-		///TODO
-	}
-
 	public Set<Redirect> getRedirects() {
 		return redirects;
 	}
 
 	public void persist() {
-		dbCon.persist(new DBUser(id, username, password));
+		dbCon.persist(new DBUser(id, username, password, is_admin));
+	}
+
+	public Boolean getIs_admin() {
+		return is_admin;
+	}
+
+	public void setIs_admin(Boolean is_admin) {
+		this.is_admin = is_admin;
+		persist();
 	}
 	
 }

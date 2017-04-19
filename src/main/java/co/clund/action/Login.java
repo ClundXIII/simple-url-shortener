@@ -2,7 +2,6 @@ package co.clund.action;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,7 +36,9 @@ public class Login extends AbstractAction {
 			return "error: no password";
 		}
 		
+		@SuppressWarnings("null")
 		String username = usernames[0];
+		@SuppressWarnings("null")
 		String password = passwords[0];
 		
 		User userByName = dbCon.getUserByName(username);

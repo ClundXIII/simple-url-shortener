@@ -118,13 +118,19 @@ public class DatabaseConnector {
 	}
 
 	public void persist(DBRedirect dbRedirect) {
-		// TODO Auto-generated method stub
-		
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.persist(dbRedirect);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 	public void persist(DBUser dbUser) {
-		// TODO Auto-generated method stub
-		
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.persist(dbUser);
+		entityManager.getTransaction().commit();
+		entityManager.close();
 	}
 
 }
