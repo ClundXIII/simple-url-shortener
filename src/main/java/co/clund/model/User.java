@@ -1,7 +1,6 @@
 package co.clund.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import co.clund.model.db.DBUser;
 import co.clund.model.db.DatabaseConnector;
@@ -44,8 +43,6 @@ public class User {
 		persist();
 	}
 
-	private final Set<Redirect> redirects = new HashSet<>();
-	
 	public User(DBUser dbUser, DatabaseConnector dbCon) {
 		this(dbUser.getId(), dbUser.getUsername(), dbUser.getPassword(), dbCon);
 	}
@@ -60,10 +57,6 @@ public class User {
 		this.dbCon = dbCon;
 	}
 
-	public Set<Redirect> getRedirects() {
-		return redirects;
-	}
-
 	public void persist() {
 		dbCon.persist(new DBUser(id, username, password, is_admin));
 	}
@@ -75,6 +68,10 @@ public class User {
 	public void setIs_admin(Boolean is_admin) {
 		this.is_admin = is_admin;
 		persist();
+	}
+	
+	public List<Redirect> getRedirects(){
+		return dbCon.getRedirectsByUser(id);
 	}
 	
 }

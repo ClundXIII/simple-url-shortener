@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,6 +17,7 @@ import org.eclipse.jetty.server.Request;
 import org.reflections.Reflections;
 
 import co.clund.action.AbstractAction;
+import co.clund.model.Redirect;
 import co.clund.model.db.DatabaseConnector;
 import co.clund.util.ResourceUtil;
 
@@ -68,7 +70,15 @@ public class MainAdminHandler {
 		switch (location) {
 		case "":
 		case "redirects":
-			body = "<h1>redirect management</h1>";
+			body = ResourceUtil.getResourceAsString("/html/redirects.html");
+			
+			StringBuilder tableColumns = new StringBuilder();
+			
+			List<Redirect> rs = dbCon.getUserById((Long)session.getAttribute("userid")).getRedirects();
+			for (Redirect r : rs){
+				tableColumns.append("<tr><td>\"" + r.getLink() + "\"</td><td>\"" + r.getUrl() + "\"</td><td>" + "all User, TBD" + "</td><td>Edit</td><td>Delete</td></tr>");
+			}
+			body = body.replace("$$REDIRECT_TABLE_BODY$$", tableColumns.toString());
 			break;
 
 		case "user":

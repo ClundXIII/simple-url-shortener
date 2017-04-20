@@ -1,5 +1,6 @@
 package co.clund.model.db;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +25,8 @@ public class DatabaseConnector {
 	
 	private final Map<String, DBRedirect> redirectLinkMap = new HashMap<>();
 	private final Map<Long, DBRedirect> redirectIdMap = new HashMap<>();
-	
-	private final Map<Long, DBUserRedirectRelation> relationIDMap = new HashMap<>();
+
+	private final Map<Long, List<Redirect>> redirectsByUser = new HashMap<>();
 
 	public DatabaseConnector(String persistentUnitName, String host, String username, String password) {
 		this(persistentUnitName, host, username, password, true);
@@ -57,18 +58,19 @@ public class DatabaseConnector {
 			List<DBRedirect> resultRedir = entityManager.createQuery("from DBRedirect", DBRedirect.class)
 					.getResultList();
 
-			System.out.println("adding redirs:");
-			for (DBRedirect r : resultRedir) {
-				System.out.println("adding redir " + r.getLink() + " " + r.getUrl());
-				redirectLinkMap.put(r.getLink(), r);
-				redirectIdMap.put(r.getId(), r);
-			}
-
 			System.out.println("adding users:");
 			for (DBUser u : result) {
 				System.out.println("added user " + u.getUsername());
 				userIdMap.put(u.getId(), u);
 				userNameMap.put(u.getUsername(), u);
+				redirectsByUser.put(u.getId(), new ArrayList<>());
+			}
+			
+			System.out.println("adding redirs:");
+			for (DBRedirect r : resultRedir) {
+				System.out.println("adding redir " + r.getLink() + " " + r.getUrl());
+				redirectLinkMap.put(r.getLink(), r);
+				redirectIdMap.put(r.getId(), r);
 			}
 
 			List<DBUserRedirectRelation> resultRel = entityManager
@@ -77,7 +79,7 @@ public class DatabaseConnector {
 			System.out.println("adding relation:");
 			for (DBUserRedirectRelation r : resultRel) {
 				System.out.println("adding relation " + r.getId() + " " + r.getUser_id() + " " + r.getUser_id());
-				relationIDMap.put(r.getId(), r);
+				redirectsByUser.get(r.getUser_id()).add(getRedirectById(r.getRedirect_id()));
 			}
 
 			entityManager.getTransaction().commit();
@@ -85,7 +87,7 @@ public class DatabaseConnector {
 		}
 	}
 
-	public User getUserById(Integer id) {
+	public User getUserById(Long id) {
 
 		DBUser dbUser = userIdMap.get(id);
 		
@@ -116,6 +118,16 @@ public class DatabaseConnector {
 		}
 		return new Redirect(dbRed, this);
 	}
+	
+	public Redirect getRedirectById(Long id) {
+
+		DBRedirect dbRed = redirectIdMap.get(id);
+
+		if (dbRed == null) {
+			return null;
+		}
+		return new Redirect(dbRed, this);
+	}
 
 	public void persist(DBRedirect dbRedirect) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
@@ -131,6 +143,10 @@ public class DatabaseConnector {
 		entityManager.persist(dbUser);
 		entityManager.getTransaction().commit();
 		entityManager.close();
+	}
+
+	public List<Redirect> getRedirectsByUser(Long userid){
+		return redirectsByUser.get(userid);
 	}
 
 }
