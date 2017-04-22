@@ -7,6 +7,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,9 @@ import co.clund.model.db.DatabaseConnector;
 import co.clund.util.ResourceUtil;
 
 public class MainAdminHandler {
+
+	private static final String REDIRECT_BODY = "$$REDIRECT_BODY$$";
+	private static final String REDIRECT_TABLE_BODY = "$$REDIRECT_TABLE_BODY$$";
 
 	private final DatabaseConnector dbCon;
 
@@ -72,13 +76,34 @@ public class MainAdminHandler {
 		case "redirects":
 			body = ResourceUtil.getResourceAsString("/html/redirects.html");
 			
-			StringBuilder tableColumns = new StringBuilder();
+			Map<String, String[]> m = request.getParameterMap();
 			
-			List<Redirect> rs = dbCon.getUserById((Long)session.getAttribute("userid")).getRedirects();
-			for (Redirect r : rs){
-				tableColumns.append("<tr><td>\"" + r.getLink() + "\"</td><td>\"" + r.getUrl() + "\"</td><td>" + "all User, TBD" + "</td><td>Edit</td><td>Delete</td></tr>");
+			if (m.get("edit") == null){
+			
+				StringBuilder tableColumns = new StringBuilder();
+				
+				List<Redirect> rs = dbCon.getUserById((Long)session.getAttribute("userid")).getRedirects();
+				for (Redirect r : rs){
+					tableColumns.append(r.renderViewRow());
+				}
+				body = body.replace(REDIRECT_BODY, ResourceUtil.getResourceAsString("/html/redirects_table.html")).replace(REDIRECT_TABLE_BODY, tableColumns.toString());
 			}
-			body = body.replace("$$REDIRECT_TABLE_BODY$$", tableColumns.toString());
+			else {
+				String[] ids = m.get("id");
+				System.out.println("ids: ");
+				for (String s : ids){
+					System.out.println(s);
+				}
+				String id = ids[0];
+				Long idLong = Long.valueOf(id);
+				Redirect redirectById = dbCon.getRedirectById(idLong);
+				if (redirectById == null){
+					body = body.replace(REDIRECT_BODY, "cannot find Redirect");
+				}
+				else {
+					body = body.replace(REDIRECT_BODY, redirectById.renderEditForm() );
+				}
+			}
 			break;
 
 		case "user":
