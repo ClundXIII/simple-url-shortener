@@ -1,6 +1,5 @@
 package co.clund.model.db;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,32 +7,20 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 
 import co.clund.model.User;
 import co.clund.model.Redirect;
 
 public class DatabaseConnector {
 
-	private EntityManagerFactory entityManagerFactory;
+	private final EntityManagerFactory entityManagerFactory;
 
 	public EntityManagerFactory getEntityManagerFactory() {
 		return entityManagerFactory;
 	}
 
-	private final Map<Long, DBUser> userIdMap = new HashMap<>();
-	private final Map<String, DBUser> userNameMap = new HashMap<>();
-	
-	private final Map<String, DBRedirect> redirectLinkMap = new HashMap<>();
-	private final Map<Long, DBRedirect> redirectIdMap = new HashMap<>();
-
-	private final Map<Long, List<Redirect>> redirectsByUser = new HashMap<>();
-
-	public DatabaseConnector(String persistentUnitName, String host, String username, String password) {
-		this(persistentUnitName, host, username, password, true);
-	}
-
-	public DatabaseConnector(String persistentUnitName, String url, String username, String password,
-			boolean loadInitialData) {
+	public DatabaseConnector(String persistentUnitName, String url, String username, String password) {
 
 		Map<String, String> configMap = new HashMap<>();
 
@@ -48,105 +35,158 @@ public class DatabaseConnector {
 		}
 
 		entityManagerFactory = Persistence.createEntityManagerFactory(persistentUnitName, configMap);
-
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-
-		if (loadInitialData) {
-			entityManager.getTransaction().begin();
-			List<DBUser> result = entityManager.createQuery("from DBUser", DBUser.class).getResultList();
-
-			List<DBRedirect> resultRedir = entityManager.createQuery("from DBRedirect", DBRedirect.class)
-					.getResultList();
-
-			System.out.println("adding users:");
-			for (DBUser u : result) {
-				System.out.println("added user " + u.getUsername());
-				userIdMap.put(u.getId(), u);
-				userNameMap.put(u.getUsername(), u);
-				redirectsByUser.put(u.getId(), new ArrayList<>());
-			}
-			
-			System.out.println("adding redirs:");
-			for (DBRedirect r : resultRedir) {
-				System.out.println("adding redir " + r.getLink() + " " + r.getUrl());
-				redirectLinkMap.put(r.getLink(), r);
-				redirectIdMap.put(r.getId(), r);
-			}
-
-			List<DBUserRedirectRelation> resultRel = entityManager
-					.createQuery("from DBUserRedirectRelation", DBUserRedirectRelation.class).getResultList();
-
-			System.out.println("adding relation:");
-			for (DBUserRedirectRelation r : resultRel) {
-				System.out.println("adding relation " + r.getId() + " " + r.getUser_id() + " " + r.getUser_id());
-				redirectsByUser.get(r.getUser_id()).add(getRedirectById(r.getRedirect_id()));
-			}
-
-			entityManager.getTransaction().commit();
-			entityManager.close();
-		}
 	}
 
 	public User getUserById(Long id) {
 
-		DBUser dbUser = userIdMap.get(id);
-		
-		if (dbUser == null){
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		List<DBUser> result = entityManager
+				.createQuery("SELECT * FROM DBUser WHERE DBUser.id LIKE :userid", DBUser.class)
+				.setParameter("userid", id).setMaxResults(1).getResultList();
+
+		DBUser dbUser = result.get(0);
+
+		if (dbUser == null) {
 			return null;
 		}
-		
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+		entityManager.clear();
+
 		return new User(dbUser, this);
 	}
 
 	public User getUserByName(String username) {
-		
-		DBUser dbUser = userNameMap.get(username);
-		
-		if (dbUser == null){
+
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		DBUser dbUser = entityManager
+				.createQuery("select c from DBUser c where c.username like :uname", DBUser.class)
+				.setParameter("uname", username).getSingleResult();
+
+		if (dbUser == null) {
 			return null;
 		}
-		
+
+		entityManager.getTransaction().commit();
+		entityManager.clear();
+		entityManager.close();
+
 		return new User(dbUser, this);
+	}
+
+	public DBUserRedirectRelation getRedirectByUserRedirectId(Long user_id, Long redirect_id) {
+
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		DBUserRedirectRelation dbRedir = entityManager
+				.createQuery(
+						"select c FROM DBUserRedirectRelation c WHERE c.user_id like :uid and "
+								+ "c.redirect_id like :rid",
+						DBUserRedirectRelation.class)
+				.setParameter("uid", user_id).setParameter("rid", redirect_id).getSingleResult();
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		entityManager.clear();
+		return dbRedir;
 	}
 
 	public Redirect getRedirectByLink(String link) {
 
-		DBRedirect dbRed = redirectLinkMap.get(link);
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		DBRedirect dbRed = null;
+		TypedQuery<DBRedirect> queryResult;
+		try {
+			queryResult = entityManager
+					.createQuery("select c FROM DBRedirect c WHERE " + "c.link like :linkasdf ",
+							DBRedirect.class)
+					.setParameter("linkasdf", link);
+			
+			dbRed = queryResult.getSingleResult();
+		} catch (Exception e) {
+			System.out.println("no result: " + e.getMessage());
+			return null;
+		}
+		
+
+		entityManager.getTransaction().commit();
+		entityManager.clear();
+		entityManager.close();
 
 		if (dbRed == null) {
 			return null;
 		}
+
 		return new Redirect(dbRed, this);
 	}
-	
+
 	public Redirect getRedirectById(Long id) {
 
-		DBRedirect dbRed = redirectIdMap.get(id);
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+
+		List<DBRedirect> result = entityManager
+				.createQuery("SELECT * FROM DBRedirect WHERE " + "DBRedirect.id LIKE :id ", DBRedirect.class)
+				.setParameter("id", id).setMaxResults(1).getResultList();
+
+		entityManager.getTransaction().commit();
+		entityManager.close();
+
+		DBRedirect dbRed = result.get(0);
 
 		if (dbRed == null) {
 			return null;
 		}
+		entityManager.clear();
 		return new Redirect(dbRed, this);
 	}
 
-	public void persist(DBRedirect dbRedirect) {
+	void persist(DBRedirect dbRedirect) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(dbRedirect);
 		entityManager.getTransaction().commit();
-		entityManager.close();
+		entityManager.clear();
 	}
 
-	public void persist(DBUser dbUser) {
+	void persist(DBUser dbUser) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		entityManager.persist(dbUser);
 		entityManager.getTransaction().commit();
-		entityManager.close();
+		entityManager.clear();
 	}
 
-	public List<Redirect> getRedirectsByUser(Long userid){
-		return redirectsByUser.get(userid);
+	void persist(DBUserRedirectRelation dbRedir) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		entityManager.getTransaction().begin();
+		entityManager.persist(dbRedir);
+		entityManager.getTransaction().commit();
+		entityManager.clear();
+	}
+
+	public List<Redirect> getRedirectsByUser(Long userid) {
+		return null; // TODO: implement redirectsByUser.get(userid);
+	}
+
+	public void persist(Redirect redirect) {
+		DBRedirect redirectToPersist = new DBRedirect(redirect);
+		persist(redirectToPersist);
+	}
+
+	public void persist(User user) {
+		DBUser redirectToPersist = new DBUser(user);
+		persist(redirectToPersist);
+
 	}
 
 }

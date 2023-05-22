@@ -7,11 +7,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import co.clund.model.User;
+
 @Entity
 @Table( name = "user" )
 public class DBUser {
 
-	@Id //@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Basic
 	private Long id;
 	
@@ -27,15 +29,21 @@ public class DBUser {
 	DBUser(){
 	}
 
-	public DBUser(int id, String username, String password, boolean is_admin) {
-		this(new Long(id), username, password, new Boolean(is_admin));
+	DBUser(String username, String password, boolean is_admin) {
+		this(username, password, new Boolean(is_admin));
 	}
 
-	public DBUser(Long id, String username, String password, Boolean is_admin) {
-		this.id = id;
+	DBUser(String username, String password, Boolean is_admin) {
 		this.username = username;
 		this.password = password;
 		this.is_admin = is_admin;
+	}
+	
+	public DBUser(User user) {
+		this.username = user.getUsername();
+		this.password = user.getPassword();
+		this.is_admin = user.getIs_admin();
+		this.id = user.getId();
 	}
 
 	public Long getId() {

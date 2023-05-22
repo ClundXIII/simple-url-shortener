@@ -7,11 +7,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import co.clund.model.Redirect;
+
 @Entity
 @Table( name = "redirect" )
 public class DBRedirect {
 
-	@Id //@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Basic
 	private Long id;
 	
@@ -21,14 +23,17 @@ public class DBRedirect {
 	@Basic
 	private String url;
 
-	public DBRedirect(){
-		
-	}
+	DBRedirect(){}
 
-	public DBRedirect(Long id, String link, String url){
-		this.id = id;
+	DBRedirect(String link, String url){
 		this.link = link;
 		this.url = url;
+	}
+	
+	DBRedirect(Redirect r){
+		this.link = r.getLink();
+		this.url = r.getUrl();
+		this.id = r.getId();
 	}
 
 	public Long getId() {

@@ -8,11 +8,12 @@ import java.net.URLConnection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 
 import org.mindrot.jbcrypt.BCrypt;
 
 import co.clund.admin.MainAdminHandler;
+import co.clund.model.Redirect;
+import co.clund.model.User;
 import co.clund.model.db.DBUser;
 import co.clund.model.db.DatabaseConnector;
 import junit.framework.TestCase;
@@ -80,28 +81,29 @@ public class AppTest extends TestCase {
 		System.out.println("starting test " + tName + " #2");
 		try {
 
-			DatabaseConnector dbCon = new DatabaseConnector("co.clund.test", null, null, null, false);
+			DatabaseConnector dbCon = new DatabaseConnector("co.clund.test", null, null, null);
 
 			System.out.println(dbCon.toString());
 
-			EntityManagerFactory emf = dbCon.getEntityManagerFactory();
-			EntityManager entityManager = emf.createEntityManager();
-			entityManager.getTransaction().begin();
-			entityManager.persist(new DBUser(1, "user1", "asdf", true));
-			entityManager.persist(new DBUser(2, "user2", "nchtasdf", false));
-			entityManager.getTransaction().commit();
-			entityManager.close();
+			User u1 = User.createNew("user1", "pwd1", dbCon);
+			User u2 = User.createNew("user2", "pwd2", dbCon);
 			
-
-			// now lets pull events from the database and list them
-			entityManager = emf.createEntityManager();
+			Redirect r1 = Redirect.createNew("link", "url", dbCon);
+			
+			EntityManager entityManager = dbCon.getEntityManagerFactory().createEntityManager();
 			entityManager.getTransaction().begin();
+			
+			// now lets pull events from the database and list them
 	        List<DBUser> result = entityManager.createQuery( "from DBUser", DBUser.class ).getResultList();
 			for ( DBUser user : result ) {
 				System.out.println( "User (" + user.getUsername() + ") : " + user.getPassword() );
 			}
 	        entityManager.getTransaction().commit();
-	        entityManager.close();
+	        
+	        User u = dbCon.getUserByName("user1");
+	        System.out.println("User u1 " + u.getUsername() + " : " + u.getPassword());
+	        Redirect r2 = dbCon.getRedirectByLink("link");
+	        System.out.println("Redirect r2 " + r2.getLink() + " : " + r2.getUrl());
 
 		} catch (Exception e) {
 			e.printStackTrace();

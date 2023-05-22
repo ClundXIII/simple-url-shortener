@@ -47,7 +47,7 @@ public class User {
 		this(dbUser.getId(), dbUser.getUsername(), dbUser.getPassword(), dbCon);
 	}
 
-	public User(Long id, String username, String password, DatabaseConnector dbCon) {
+	private User(Long id, String username, String password, DatabaseConnector dbCon) {
 		
 		this.id = id;
 		
@@ -56,9 +56,17 @@ public class User {
 		
 		this.dbCon = dbCon;
 	}
+	
+	public static User createNew(String username, String password, DatabaseConnector dbCon){
+		
+		User u = new User(null, username, password, dbCon);
+		u.persist();
+		
+		return u;
+	}
 
 	public void persist() {
-		dbCon.persist(new DBUser(id, username, password, is_admin));
+		dbCon.persist(this);
 	}
 
 	public Boolean getIs_admin() {

@@ -12,16 +12,25 @@ public class Redirect {
 	private String url;
 	
 	private final DatabaseConnector dbCon;
-	private final DBRedirect dbRedirect;
 
 	public Redirect(DBRedirect dbRedirect, DatabaseConnector dbCon){
 		this.id = dbRedirect.getId();
 		this.link = dbRedirect.getLink();
 		this.url = dbRedirect.getUrl();
 		this.dbCon = dbCon;
-		this.dbRedirect = dbRedirect;
 	}
 
+	Redirect(Long id, String link, String url, DatabaseConnector dbCon) {
+		this.id = id;
+		this.link = link;
+		this.url = url;
+		this.dbCon = dbCon;
+	}
+
+	public Long getId() {
+		return id;
+	}
+	
 	public String getUrl() {
 		return url;
 	}
@@ -43,7 +52,7 @@ public class Redirect {
 	}
 	
 	public void persist() {
-		dbCon.persist(new DBRedirect(dbRedirect.getId(), link, url));
+		dbCon.persist(this);
 	}
 
 	public String renderViewRow() {
@@ -75,4 +84,11 @@ public class Redirect {
 		
 		return html.toString(); //<td>Delete</td></tr>";
 	}
+
+	public static Redirect createNew(String link, String url, DatabaseConnector dbCon) {
+		Redirect r = new Redirect(null, link, url, dbCon);
+		r.persist();
+		return r;
+	}
+
 }

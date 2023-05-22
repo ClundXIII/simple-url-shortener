@@ -44,9 +44,9 @@
 
 		<properties>
 			<property name="hibernate.archive.autodetection" value="class" />
-			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect" /> -->
+			<!-- <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect" /> &amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=CEST -->
 			<property name="hibernate.connection.driver_class" value="com.mysql.cj.jdbc.Driver" />
-			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/simple-url-short?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC" />
+			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/simple-url-short?useUnicode=true" />
 			<property name="hibernate.connection.username" value="root" />
 			<property name="hibernate.connection.password" value="" />
 			<property name="hibernate.show_sql" value="true"/>
